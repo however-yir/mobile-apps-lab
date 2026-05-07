@@ -1,0 +1,19 @@
+*.iml
+.gradle
+local.properties
+.idea
+.DS_Store
+build
+captures
+.externalNativeBuild
+
+# --- Baseline Ignore Rules ---
+.idea/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+node_modules/
+dist/
+build/
+target/

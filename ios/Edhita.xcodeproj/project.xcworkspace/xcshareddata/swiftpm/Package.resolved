@@ -1,0 +1,42 @@
+{
+  "originHash" : "5517dfaa1e5f3156468df2c3327903f51f28c0af040a01e57a286f2b0c2a3ce5",
+  "pins" : [
+    {
+      "identity" : "ink",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnSundell/Ink.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "77c3d8953374a9cf5418ef0bd7108524999de85a"
+      }
+    },
+    {
+      "identity" : "swift-package-manager-google-mobile-ads",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
+      "state" : {
+        "revision" : "1239c23464503053c17d37ee5daa70de3455e9c8",
+        "version" : "12.14.0"
+      }
+    },
+    {
+      "identity" : "swift-package-manager-google-user-messaging-platform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git",
+      "state" : {
+        "revision" : "13b248eaa73b7826f0efb1bcf455e251d65ecb1b",
+        "version" : "3.1.0"
+      }
+    },
+    {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/SwiftUI-Introspect.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "7ef0df639079491ee1aaf6b83b6fd4d08df80393"
+      }
+    }
+  ],
+  "version" : 3
+}

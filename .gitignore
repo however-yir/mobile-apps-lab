@@ -1,0 +1,28 @@
+# === macOS ===
+.DS_Store
+*.swp
+*~
+
+# === Android ===
+*.iml
+.gradle
+local.properties
+.idea
+build
+captures
+.externalNativeBuild
+__pycache__/
+
+# === iOS ===
+xcuserdata/
+*.xcscmblueprint
+DerivedData/
+build/
+
+# === General ===
+.env
+.env.*
+node_modules/
+dist/
+target/
+*.py[cod]
