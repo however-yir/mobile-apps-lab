@@ -1,0 +1,33 @@
+name: Link Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-links:
+    name: Check Markdown Links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --exclude-mail
+            --exclude 'https://github.com/however-yir/android-compose-lab'
+            --exclude 'https://github.com/however-yir/swiftui-text-editor'
+            --exclude 'https://github.com/however-yir/howeverios-edhita'
+            --exclude 'https://github.com/however-yir/howeverandroid-architecture-lab'
+            '**/*.md'
+          fail: true

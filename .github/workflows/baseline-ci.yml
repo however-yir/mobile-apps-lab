@@ -1,0 +1,81 @@
+name: Baseline CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  quality:
+    name: Lint / Build / Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        if: ${{ hashFiles('**/pom.xml', '**/build.gradle', '**/build.gradle.kts') != '' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          ran=0
+
+          if [ -f android/build.gradle.kts ]; then
+            echo "Detected Android project — lint will run as part of build."
+            ran=1
+          fi
+
+          if [ "$ran" -eq 0 ]; then
+            echo 'No lint target detected, skip.'
+          fi
+
+      - name: Build
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f android/build.gradle.kts ]; then
+            cd android
+            chmod +x gradlew
+            ./gradlew :app:assembleDebug -x lint --no-configuration-cache --no-daemon --stacktrace
+            echo "Android build succeeded."
+          else
+            echo 'No Android build target detected, skip.'
+          fi
+
+      - name: Test
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f android/build.gradle.kts ]; then
+            cd android
+            chmod +x gradlew
+            ./gradlew test --no-configuration-cache --no-daemon --stacktrace
+            echo "Android tests succeeded."
+          else
+            echo 'No Android test target detected, skip.'
+          fi

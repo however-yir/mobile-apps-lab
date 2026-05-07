@@ -134,7 +134,7 @@
 
 ```bash
 git clone https://github.com/however-yir/mobile-apps-lab.git
-cd howeverandroid-architecture-lab
+cd android
 ```
 
 2. 使用 Android Studio 打开根目录。  

@@ -1,0 +1,181 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: mobile-apps-lab-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_PATH: ios/Edhita.xcodeproj
+  SCHEME: Edhita
+
+jobs:
+  lint:
+    runs-on: macos-latest
+    continue-on-error: true
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SwiftLint and SwiftFormat
+        run: |
+          brew install swiftlint swiftformat
+
+      - name: Run SwiftFormat (lint mode)
+        continue-on-error: true
+        run: swiftformat ios/Edhita ios/EdhitaTests ios/EdhitaUITests --lint
+
+      - name: Run SwiftLint
+        if: always()
+        continue-on-error: true
+        working-directory: ios
+        run: swiftlint lint --strict
+
+  build:
+    runs-on: macos-latest
+    needs: lint
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve simulator destination
+        run: |
+          SIMULATOR_ID="$(xcrun simctl list devices available \
+            | grep -m1 -E 'iPhone .*\([0-9A-Fa-f-]{36}\)' \
+            | sed -E 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/')"
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "::error::No available iPhone simulator found on runner."
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "DESTINATION=platform=iOS Simulator,id=$SIMULATOR_ID" >> "$GITHUB_ENV"
+          echo "Using destination: platform=iOS Simulator,id=$SIMULATOR_ID"
+
+      - name: Validate test plan file
+        run: test -f ios/Edhita.xctestplan
+
+      - name: Build (no signing)
+        run: |
+          xcodebuild \
+            -project "$PROJECT_PATH" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            -derivedDataPath ios/build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+  unit-tests:
+    runs-on: macos-latest
+    needs: build
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve simulator destination
+        run: |
+          SIMULATOR_ID="$(xcrun simctl list devices available \
+            | grep -m1 -E 'iPhone .*\([0-9A-Fa-f-]{36}\)' \
+            | sed -E 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/')"
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "::error::No available iPhone simulator found on runner."
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "DESTINATION=platform=iOS Simulator,id=$SIMULATOR_ID" >> "$GITHUB_ENV"
+          echo "Using destination: platform=iOS Simulator,id=$SIMULATOR_ID"
+
+      - name: Inject test AdMob app id for CI tests
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :GADApplicationIdentifier ca-app-pub-3940256099942544~1458002511" ios/Edhita/Info.plist
+
+      - name: Run EdhitaTests
+        run: |
+          xcodebuild \
+            -project "$PROJECT_PATH" \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -derivedDataPath ios/build/DerivedData \
+            -resultBundlePath ios/build/EdhitaTests.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            -only-testing:EdhitaTests \
+            test
+
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-tests-xcresult
+          path: ios/build/EdhitaTests.xcresult
+          if-no-files-found: warn
+
+  ui-smoke-tests:
+    runs-on: macos-latest
+    needs: unit-tests
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve simulator destination
+        run: |
+          SIMULATOR_ID="$(xcrun simctl list devices available \
+            | grep -m1 -E 'iPhone .*\([0-9A-Fa-f-]{36}\)' \
+            | sed -E 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/')"
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "::error::No available iPhone simulator found on runner."
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "DESTINATION=platform=iOS Simulator,id=$SIMULATOR_ID" >> "$GITHUB_ENV"
+          echo "Using destination: platform=iOS Simulator,id=$SIMULATOR_ID"
+
+      - name: Inject test AdMob app id for CI tests
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :GADApplicationIdentifier ca-app-pub-3940256099942544~1458002511" ios/Edhita/Info.plist
+
+      - name: Run EdhitaUITests smoke
+        run: |
+          xcodebuild \
+            -project "$PROJECT_PATH" \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -derivedDataPath ios/build/DerivedData \
+            -resultBundlePath ios/build/EdhitaUITests.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            -only-testing:EdhitaUITests/EdhitaUITests/testLaunchEditAndShareSmoke \
+            test
+
+      - name: Capture Simulator Screenshot On Failure
+        if: failure()
+        run: |
+          mkdir -p ios/build
+          xcrun simctl io booted screenshot ios/build/ui-smoke-failure.png || true
+
+      - name: Upload UI Smoke Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-smoke-tests-xcresult
+          path: ios/build/EdhitaUITests.xcresult
+          if-no-files-found: warn
+
+      - name: Upload UI Smoke Screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-smoke-failure-screenshot
+          path: ios/build/ui-smoke-failure.png
+          if-no-files-found: ignore

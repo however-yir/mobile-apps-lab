@@ -137,7 +137,7 @@
 
 ```bash
 git clone https://github.com/however-yir/mobile-apps-lab.git
-cd howeverios-edhita
+cd ios
 ```
 
 2. 按需复制配置：
