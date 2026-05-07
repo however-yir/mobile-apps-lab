@@ -8,7 +8,7 @@
 
 > **Status:** `showcase-ready`
 >
-> **合并自：** [android-compose-lab](https://github.com/however-yir/android-compose-lab) + [swiftui-text-editor](https://github.com/however-yir/swiftui-text-editor)
+> **合并自：** android-compose-lab + swiftui-text-editor
 
 ---
 
