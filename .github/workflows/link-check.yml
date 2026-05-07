@@ -24,7 +24,6 @@ jobs:
           args: >
             --verbose
             --no-progress
-            --exclude-mail
             --exclude 'https://github.com/however-yir/android-compose-lab'
             --exclude 'https://github.com/however-yir/swiftui-text-editor'
             --exclude 'https://github.com/however-yir/howeverios-edhita'
