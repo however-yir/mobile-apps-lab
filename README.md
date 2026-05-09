@@ -1,9 +1,13 @@
-# mobile-apps-lab — Android + iOS 双平台移动端工程实验室
+# mobile-apps-lab — Android Jetpack Compose + iOS SwiftUI 双平台移动端工程实验室
 
 [![Status](https://img.shields.io/badge/status-showcase--ready-2563EB)](https://github.com/however-yir/mobile-apps-lab#readme)
+[![Android CI](https://github.com/however-yir/mobile-apps-lab/actions/workflows/android-ci.yml/badge.svg)](https://github.com/however-yir/mobile-apps-lab/actions/workflows/android-ci.yml)
+[![iOS CI](https://github.com/however-yir/mobile-apps-lab/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/however-yir/mobile-apps-lab/actions/workflows/ios-ci.yml)
+[![Link Check](https://github.com/however-yir/mobile-apps-lab/actions/workflows/link-check.yml/badge.svg)](https://github.com/however-yir/mobile-apps-lab/actions/workflows/link-check.yml)
+[![CodeQL](https://github.com/however-yir/mobile-apps-lab/actions/workflows/codeql-android.yml/badge.svg)](https://github.com/however-yir/mobile-apps-lab/actions/workflows/codeql-android.yml)
 
-🔥 **跨平台移动工程能力统一展示** — 将 Android 架构实践与 iOS 文本编辑器能力整合到一个仓库中。
-🚀 Android 侧聚焦 Jetpack Compose / Hilt / Room / 测试分层；iOS 侧聚焦 SwiftUI / 文件系统 / 编辑体验。
+🔥 **跨平台移动工程能力统一展示** — 将 Android Jetpack Compose 架构实践与 iOS SwiftUI 编辑器能力整合到一个仓库中。
+🚀 Android 侧：Jetpack Compose / Hilt / Room / 分层测试（任务管理应用）；iOS 侧：SwiftUI / 文件系统 / 编辑体验（文本编辑器 Edhita）。
 ⭐ 适用于移动端架构学习、双平台工程对比、企业内训样板、以及业务项目冷启动骨架。
 
 > **Status:** `showcase-ready`
@@ -21,7 +25,8 @@
 - [5. 技术栈总览](#5-技术栈总览)
 - [6. 测试与质量保障](#6-测试与质量保障)
 - [7. 二次开发建议](#7-二次开发建议)
-- [8. License](#8-license)
+- [8. 贡献](#8-贡献)
+- [9. License](#9-license)
 
 ---
 
@@ -43,7 +48,11 @@ mobile-apps-lab/
 │   ├── Config/
 │   ├── docs/
 │   └── ...
+├── .github/          ← CI workflows, Dependabot, issue/PR templates
 ├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
+├── LICENSE
 ├── README.md
 └── .gitignore
 ```
@@ -151,8 +160,18 @@ open Edhita.xcodeproj
 
 ---
 
-## 8. License
+## 8. 贡献
 
-- Android 子项目：Apache-2.0（见 `android/LICENSE`）
-- iOS 子项目：MIT（见 `ios/LICENSE`）
+欢迎贡献！请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 了解开发环境配置、构建指引和 PR 规范。
+
+本项目遵循 [Contributor Covenant 行为准则](CODE_OF_CONDUCT.md)。
+
+---
+
+## 9. License
+
+本仓库根级采用 [MIT License](LICENSE)。
+
+- Android 子项目上游：Apache-2.0（见 `android/LICENSE`）
+- iOS 子项目上游：MIT（见 `ios/LICENSE`）
 - 衍生层说明见各子项目 `LICENSE.HOWEVER`
