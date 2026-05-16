@@ -27,7 +27,7 @@ androidxTestRules = "1.7.0"
 androidxTestRunner = "1.7.0"
 androidxTracing = "1.2.0"
 androidxUiAutomator = "2.3.0"
-androidxWindowManager = "1.4.0"
+androidxWindowManager = "1.5.1"
 androidxWork = "2.11.2"
 coil = "2.7.0"
 # @keep
